@@ -1,0 +1,67 @@
+name: Deploy to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Run type check
+        run: npm run typecheck
+        
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          
+      - name: Deploy to Azure
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'synestica'
+          package: './build'
+          runtime: 'NODE:20-lts'
+          
+      - name: Configure app settings
+        run: |
+          az webapp config appsettings set \
+            --name "synestica" \
+            --resource-group "synesthetica-rg" \
+            --settings \
+              NODE_ENV=production \
+              NEXT_PUBLIC_APP_URL="https://synestica.azurewebsites.net" \
+              AZURE_STORAGE_CONNECTION_STRING="${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" \
+              AZURE_STORAGE_CONTAINER_NAME="synesthetica-uploads" \
+              DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+              AUTH_SECRET="${{ secrets.AUTH_SECRET }}"
+              
+      - name: Azure logout
+        if: always()
+        run: az logout

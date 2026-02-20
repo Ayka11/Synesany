@@ -1,0 +1,24 @@
+.DS_Store
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
+
+# Logs and temp files
+*.log
+build.log
+server-error.log
+react-router-*.cpuprofile
+status.txt
+
+# Documentation
+*.md
+!README.md
+
+# Deployment scripts
+deploy-*.sh
+start-azure.js
+
+# Lock files (keeping package-lock.json)
+bun.lock
