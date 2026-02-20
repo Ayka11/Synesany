@@ -1,5 +1,12 @@
 import { Outlet } from 'react-router';
 
+export const meta = () => {
+  return [
+    { title: "Synesthetica" },
+    { name: "description", content: "Synesthesia-inspired drawing application" },
+  ];
+};
+
 export default function Root() {
   return (
     <html lang="en">
