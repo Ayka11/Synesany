@@ -46,7 +46,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'synestica'
-          package: './build'
+          package: './dist'
           runtime: 'NODE:20-lts'
           
       - name: Configure app settings
