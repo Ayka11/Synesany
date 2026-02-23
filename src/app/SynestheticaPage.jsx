@@ -8,13 +8,13 @@ import { PALETTES } from "@/constants/palettes";
 import { BRUSHES } from "@/constants/brushes";
 
 function AppContent() {
-  const { theme, toggleTheme } = useTheme();
+  const { toggleTheme, currentTheme } = useTheme();
   const { language, setLanguage, translate } = useLanguage();
   const canvasRef = useRef(null);
   const audioContextRef = useRef(null);
   const [color, setColor] = useState("#8b5cf6");
   const [brushSize, setBrushSize] = useState(16);
-  const [brushType, setBrushType] = useState("round");
+  const [selectedBrush, setSelectedBrush] = useState("round");
   const [instrument, setInstrument] = useState("piano");
   const [isDrawing, setIsDrawing] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
@@ -73,9 +73,9 @@ function AppContent() {
     canvas.height = 400;
     
     // Clear canvas with background
-    ctx.fillStyle = theme === 'dark' ? '#2a2a2a' : '#ffffff';
+    ctx.fillStyle = currentTheme.name === 'dark' ? '#2a2a2a' : '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }, [theme]);
+  }, [currentTheme]);
 
   // Convert hex color to frequency
   const colorToFrequency = (hexColor) => {
@@ -167,14 +167,14 @@ function AppContent() {
     setIsDrawing(false);
   };
 
-  const clearCanvas = () => {
+  const handleClearCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    ctx.fillStyle = theme === 'dark' ? '#2a2a2a' : '#ffffff';
+    ctx.fillStyle = currentTheme.name === 'dark' ? '#2a2a2a' : '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   };
 
@@ -213,16 +213,16 @@ function AppContent() {
   return (
     <div style={{ 
       padding: '0', 
-      background: theme === 'dark' ? '#1a1a1a' : '#f5f5f5', 
-      color: theme === 'dark' ? 'white' : 'black', 
+      background: currentTheme.name === 'dark' ? '#1a1a1a' : '#f5f5f5', 
+      color: currentTheme.name === 'dark' ? 'white' : 'black', 
       minHeight: '100vh',
       direction: language === 'ar' ? 'rtl' : 'ltr'
     }}>
       {/* Header */}
       <div style={{
         height: '60px',
-        background: theme === 'dark' ? '#1f2937' : '#ffffff',
-        borderBottom: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
+        background: currentTheme.name === 'dark' ? '#1f2937' : '#ffffff',
+        borderBottom: `1px solid ${currentTheme.name === 'dark' ? '#374151' : '#e5e7eb'}`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -230,7 +230,7 @@ function AppContent() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <h1 style={{ 
-            color: theme === 'dark' ? '#e5e7eb' : '#1f2937', 
+            color: currentTheme.name === 'dark' ? '#e5e7eb' : '#1f2937', 
             fontSize: '20px', 
             fontWeight: 'bold',
             margin: 0 
@@ -244,9 +244,9 @@ function AppContent() {
             onChange={(e) => setLanguage(e.target.value)}
             style={{
               padding: '6px 12px',
-              background: theme === 'dark' ? '#374151' : '#f3f4f6',
-              color: theme === 'dark' ? '#e5e7eb' : '#1f2937',
-              border: `1px solid ${theme === 'dark' ? '#4b5563' : '#d1d5db'}`,
+              background: currentTheme.name === 'dark' ? '#374151' : '#f3f4f6',
+              color: currentTheme.name === 'dark' ? '#e5e7eb' : '#1f2937',
+              border: `1px solid ${currentTheme.name === 'dark' ? '#4b5563' : '#d1d5db'}`,
               borderRadius: '6px',
               cursor: 'pointer'
             }}
@@ -264,20 +264,20 @@ function AppContent() {
             onClick={toggleTheme}
             style={{
               padding: '8px 16px',
-              background: theme === 'dark' ? '#4f46e5' : '#6366f1',
+              background: currentTheme.name === 'dark' ? '#4f46e5' : '#6366f1',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
               cursor: 'pointer'
             }}
           >
-            {theme === 'dark' ? '☀️' : '🌙'}
+            {currentTheme.name === 'dark' ? '☀️' : '🌙'}
           </button>
         </div>
         
         {/* Volume Control */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280', fontSize: '14px' }}>
+          <span style={{ color: currentTheme.name === 'dark' ? '#9ca3af' : '#6b7280', fontSize: '14px' }}>
             🔊
           </span>
           <input
@@ -311,8 +311,8 @@ function AppContent() {
         <div style={{
           width: sidebarCollapsed ? '64px' : '320px',
           height: 'calc(100vh - 60px)',
-          background: theme === 'dark' ? '#1f2937' : '#f9fafb',
-          borderRight: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
+          background: currentTheme.name === 'dark' ? '#1f2937' : '#f9fafb',
+          borderRight: `1px solid ${currentTheme.name === 'dark' ? '#374151' : '#e5e7eb'}`,
           padding: sidebarCollapsed ? '8px' : '16px',
           transition: 'all 0.3s ease',
           overflow: 'hidden'
@@ -323,7 +323,7 @@ function AppContent() {
             style={{
               width: '32px',
               height: '32px',
-              background: theme === 'dark' ? '#4f46e5' : '#6366f1',
+              background: currentTheme.name === 'dark' ? '#4f46e5' : '#6366f1',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
@@ -347,7 +347,7 @@ function AppContent() {
                     width: '100%',
                     padding: '8px',
                     background: 'transparent',
-                    color: theme === 'dark' ? '#e5e7eb' : '#374151',
+                    color: currentTheme.name === 'dark' ? '#e5e7eb' : '#374151',
                     border: 'none',
                     borderRadius: '6px',
                     cursor: 'pointer',
@@ -368,7 +368,7 @@ function AppContent() {
                       <div key={index} style={{ marginBottom: '12px' }}>
                         <div style={{ 
                           fontSize: '12px', 
-                          color: theme === 'dark' ? '#9ca3af' : '#6b7280',
+                          color: currentTheme.name === 'dark' ? '#9ca3af' : '#6b7280',
                           marginBottom: '6px',
                           fontWeight: '500'
                         }}>
@@ -404,7 +404,7 @@ function AppContent() {
                     width: '100%',
                     padding: '8px',
                     background: 'transparent',
-                    color: theme === 'dark' ? '#e5e7eb' : '#374151',
+                    color: currentTheme.name === 'dark' ? '#e5e7eb' : '#374151',
                     border: 'none',
                     borderRadius: '6px',
                     cursor: 'pointer',
@@ -425,7 +425,7 @@ function AppContent() {
                     <div style={{ marginBottom: '12px' }}>
                       <div style={{ 
                         fontSize: '12px', 
-                        color: theme === 'dark' ? '#9ca3af' : '#6b7280',
+                        color: currentTheme.name === 'dark' ? '#9ca3af' : '#6b7280',
                         marginBottom: '6px'
                       }}>
                         Brush Type
@@ -434,14 +434,14 @@ function AppContent() {
                         {Object.entries(BRUSHES).map(([brushKey, brush]) => (
                           <button
                             key={brushKey}
-                            onClick={() => setBrushType(brushKey)}
+                            onClick={() => setSelectedBrush(brushKey)}
                             style={{
                               padding: '6px',
-                              background: brushType === brushKey 
-                                ? (theme === 'dark' ? '#4f46e5' : '#6366f1')
-                                : (theme === 'dark' ? '#374151' : '#f3f4f6'),
-                              color: theme === 'dark' ? '#e5e7eb' : '#374151',
-                              border: `1px solid ${theme === 'dark' ? '#4b5563' : '#d1d5db'}`,
+                              background: selectedBrush === brushKey 
+                                ? (currentTheme.name === 'dark' ? '#4f46e5' : '#6366f1')
+                                : (currentTheme.name === 'dark' ? '#374151' : '#f3f4f6'),
+                              color: currentTheme.name === 'dark' ? '#e5e7eb' : '#374151',
+                              border: `1px solid ${currentTheme.name === 'dark' ? '#4b5563' : '#d1d5db'}`,
                               borderRadius: '4px',
                               cursor: 'pointer',
                               fontSize: '10px'
@@ -457,7 +457,7 @@ function AppContent() {
                     <div style={{ marginBottom: '12px' }}>
                       <div style={{ 
                         fontSize: '12px', 
-                        color: theme === 'dark' ? '#9ca3af' : '#6b7280',
+                        color: currentTheme.name === 'dark' ? '#9ca3af' : '#6b7280',
                         marginBottom: '6px'
                       }}>
                         {t('color')}
@@ -469,7 +469,7 @@ function AppContent() {
                         style={{ 
                           width: '100%', 
                           height: '32px', 
-                          border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`, 
+                          border: `1px solid ${currentTheme.name === 'dark' ? '#374151' : '#e5e7eb'}`, 
                           borderRadius: '4px',
                           cursor: 'pointer'
                         }}
@@ -480,7 +480,7 @@ function AppContent() {
                     <div>
                       <div style={{ 
                         fontSize: '12px', 
-                        color: theme === 'dark' ? '#9ca3af' : '#6b7280',
+                        color: currentTheme.name === 'dark' ? '#9ca3af' : '#6b7280',
                         marginBottom: '6px'
                       }}>
                         {t('brushSize')}: {brushSize}px
@@ -506,7 +506,7 @@ function AppContent() {
                     width: '100%',
                     padding: '8px',
                     background: 'transparent',
-                    color: theme === 'dark' ? '#e5e7eb' : '#374151',
+                    color: currentTheme.name === 'dark' ? '#e5e7eb' : '#374151',
                     border: 'none',
                     borderRadius: '6px',
                     cursor: 'pointer',
@@ -528,9 +528,9 @@ function AppContent() {
                     style={{
                       width: '100%',
                       padding: '8px',
-                      background: theme === 'dark' ? '#374151' : '#ffffff',
-                      color: theme === 'dark' ? '#e5e7eb' : '#374151',
-                      border: `1px solid ${theme === 'dark' ? '#4b5563' : '#d1d5db'}`,
+                      background: currentTheme.name === 'dark' ? '#374151' : '#ffffff',
+                      color: currentTheme.name === 'dark' ? '#e5e7eb' : '#374151',
+                      border: `1px solid ${currentTheme.name === 'dark' ? '#4b5563' : '#d1d5db'}`,
                       borderRadius: '4px'
                     }}
                   >
@@ -549,10 +549,10 @@ function AppContent() {
               {/* Action Buttons */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <button
-                  onClick={clearCanvas}
+                  onClick={handleClearCanvas}
                   style={{
                     padding: '8px 16px',
-                    background: theme === 'dark' ? '#dc2626' : '#ef4444',
+                    background: currentTheme.name === 'dark' ? '#dc2626' : '#ef4444',
                     color: 'white',
                     border: 'none',
                     borderRadius: '6px',
@@ -568,8 +568,8 @@ function AppContent() {
                   style={{
                     padding: '8px 16px',
                     background: isSoundEnabled 
-                      ? (theme === 'dark' ? '#16a34a' : '#22c55e')
-                      : (theme === 'dark' ? '#6b7280' : '#9ca3af'),
+                      ? (currentTheme.name === 'dark' ? '#16a34a' : '#22c55e')
+                      : (currentTheme.name === 'dark' ? '#6b7280' : '#9ca3af'),
                     color: 'white',
                     border: 'none',
                     borderRadius: '6px',
@@ -614,9 +614,9 @@ function AppContent() {
               style={{
                 width: '600px',
                 height: '400px',
-                border: `2px solid ${theme === 'dark' ? '#4f46e5' : '#6366f1'}`,
+                border: `2px solid ${currentTheme.name === 'dark' ? '#4f46e5' : '#6366f1'}`,
                 borderRadius: '8px',
-                background: theme === 'dark' ? '#2a2a2a' : '#ffffff',
+                background: currentTheme.name === 'dark' ? '#2a2a2a' : '#ffffff',
                 cursor: 'crosshair'
               }}
             />
@@ -628,8 +628,8 @@ function AppContent() {
               style={{
                 padding: '12px 24px',
                 background: isGenerating 
-                  ? (theme === 'dark' ? '#6b7280' : '#9ca3af')
-                  : (theme === 'dark' ? '#16a34a' : '#22c55e'),
+                  ? (currentTheme.name === 'dark' ? '#6b7280' : '#9ca3af')
+                  : (currentTheme.name === 'dark' ? '#16a34a' : '#22c55e'),
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
