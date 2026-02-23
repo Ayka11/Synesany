@@ -10,7 +10,6 @@ import {
   Plus,
   ChevronLeft,
   Image as ImageIcon,
-  Music,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -21,6 +20,7 @@ function DashboardPageContent() {
   const { data: user } = useUser();
   const { userTier } = useSubscription();
   const [activeView, setActiveView] = useState("experiments"); // 'experiments' or 'upload'
+  const [deletingId, setDeletingId] = useState(null);
   const {
     data: drawings = [],
     isLoading,
@@ -32,6 +32,21 @@ function DashboardPageContent() {
       return res.json();
     },
   });
+
+  const handleDelete = async (drawing) => {
+    if (!confirm(`Delete "${drawing.title}"? This cannot be undone.`)) return;
+    setDeletingId(drawing.id);
+    try {
+      const res = await fetch(`/api/drawings/${drawing.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      toast.success("Drawing deleted");
+      refetch();
+    } catch {
+      toast.error("Could not delete drawing");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   if (isLoading)
     return (
@@ -155,6 +170,13 @@ function DashboardPageContent() {
                       <button className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white hover:bg-white/20 active:scale-95 transition-all">
                         <Download size={20} />
                       </button>
+                      <button
+                        onClick={() => handleDelete(drawing)}
+                        disabled={deletingId === drawing.id}
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-600/80 text-white hover:bg-red-500 active:scale-95 transition-all disabled:opacity-50"
+                      >
+                        <Trash2 size={20} />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -166,23 +188,12 @@ function DashboardPageContent() {
         {/* Upload & Sonify View */}
         {activeView === "upload" && (
           <div className="max-w-4xl mx-auto">
-            <div className="mb-8 text-center">
-              <h1
-                className="text-4xl font-bold text-white mb-2"
-                style={{ fontFamily: "Instrument Serif, serif" }}
-              >
-                Upload & <em className="italic italic">Sonify</em>
-              </h1>
-              <p className="text-white/40">
-                Transform any image into sound using advanced color-to-frequency mapping
-              </p>
-              <div className="mt-3 text-sm text-white/30">
-                {userTier === "pro" ? (
-                  <span className="text-purple-400">Pro Account</span>
-                ) : (
-                  <span>Free Account • Limited uploads per day</span>
-                )}
-              </div>
+            <div className="mb-4 text-right text-sm text-white/30">
+              {userTier === "pro" ? (
+                <span className="text-purple-400">Pro Account</span>
+              ) : (
+                <span>Free Account • Limited uploads per day</span>
+              )}
             </div>
 
             <ImageUpload
