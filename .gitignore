@@ -5,6 +5,9 @@
 /.react-router/
 /build/
 
+# Dist
+/dist/
+
 # Logs and temp files
 *.log
 build.log
