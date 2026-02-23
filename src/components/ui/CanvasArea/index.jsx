@@ -1,10 +1,10 @@
 import React from 'react';
 import * as Icons from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SonificationModePanel } from '../SonificationModePanel';
-import { CanvasStatusPanel } from '../CanvasStatusPanel';
-import { TimeScale } from '../TimeScale';
-import { FloatingControls } from '../FloatingControls';
+import { SonificationModePanel } from '../../Canvas/SonificationModePanel';
+import { CanvasStatusPanel } from '../../Canvas/CanvasStatusPanel';
+import { TimeScale } from '../../Canvas/TimeScale';
+import { FloatingControls } from '../../Canvas/FloatingControls';
 
 export function CanvasArea({
   canvasRef,
