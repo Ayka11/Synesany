@@ -73,7 +73,7 @@ function AppContent() {
     canvas.height = 400;
     
     // Clear canvas with background
-    ctx.fillStyle = theme === 'dark' ? '#2a2a2a' : '#ffffff';
+    ctx.fillStyle = theme === 'dark' ? '#0a0a0c' : '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, [theme]);
 
@@ -174,7 +174,7 @@ function AppContent() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    ctx.fillStyle = theme === 'dark' ? '#2a2a2a' : '#ffffff';
+    ctx.fillStyle = theme === 'dark' ? '#0a0a0c' : '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   };
 
@@ -616,7 +616,7 @@ function AppContent() {
                 height: '400px',
                 border: `2px solid ${theme === 'dark' ? '#4f46e5' : '#6366f1'}`,
                 borderRadius: '8px',
-                background: theme === 'dark' ? '#2a2a2a' : '#ffffff',
+                background: theme === 'dark' ? '#0a0a0c' : '#ffffff',
                 cursor: 'crosshair'
               }}
             />
