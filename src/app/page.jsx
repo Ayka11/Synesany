@@ -1,5 +1,5 @@
-import { SynestheticaPage } from './SynestheticaPage';
+import SynestheticaPage from './synestheticaPage';
 
-export default function Page() {
+export default function Home() {
   return <SynestheticaPage />;
 }
