@@ -1,4 +1,4 @@
-import SynestheticaPage from './synestheticaPage';
+import SynestheticaPage from './SynestheticaPage';
 
 export default function Home() {
   return <SynestheticaPage />;
