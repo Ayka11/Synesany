@@ -1,0 +1,21 @@
+{
+  "name": "Synesthetica",
+  "short_name": "Synesthetica",
+  "description": "Where colors become sound — a synesthesia-inspired drawing app",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#8b5cf6",
+  "icons": [
+    {
+      "src": "/placeholder.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/placeholder.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
