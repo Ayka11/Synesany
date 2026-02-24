@@ -11,7 +11,8 @@ import {
 } from 'lucide-react';
 
 import { DEFAULT_COLORS, PIANO_KEYS, BrushType, InstrumentType } from '@/data/pianoKeys';
-import ColorWheelPicker from '@/components/ui/ColorWheelPicker';
+
+import ImageSonifyButton from './ImageSonifyButton';
 
 
 const BottomBar: React.FC = () => {
@@ -247,6 +248,8 @@ const BottomBar: React.FC = () => {
         <div className="flex items-center gap-2 justify-between">
           {/* Daily counter */}
           <div className="flex items-center gap-2">
+            {/* Sonify Image Upload Button */}
+            <ImageSonifyButton />
             <div className="text-[10px] text-muted-foreground">
               <span className="font-mono font-bold text-foreground">{dailyCount}</span>
               <span>/{dailyLimit} {t('daily.limit')}</span>

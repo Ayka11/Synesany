@@ -40,9 +40,19 @@
 - **Direct Mapping:** Each color directly maps to a musical note based on its hue/lightness.
 - **Piano Key Mapping:** Colors are mapped to the nearest real piano key using the 88-key palette.
 - **Custom Modes:** (If enabled) Experiment with alternative mappings or scales.
-...existing code...
-  - Bell: Bright, sparkling (Simple, Timeline)
-  - Bass: Deep, grounding (all modes)
+
+---
+
+## 🆕 Image Sonification Feature
+
+- **Upload Image to Canvas:** Instantly upload a JPG, PNG, or GIF and see it rendered directly on the main drawing canvas.
+- **Sonify Any Image:** Click the same button to generate a soundscape from the uploaded image, using the currently selected sonification mode:
+  - **Simple:** Average color → single expressive tone
+  - **Timeline:** Left-to-right scan → sequence of notes
+  - **Colorfield:** 2D grid → spatial, ambient tones (with panning)
+  - **Harmonic:** Color clusters/quadrants → layered chords
+- **Play/Stop Toggle:** Use the button to start or stop playback. Button disables during playback for smooth UX.
+- **No Server Required:** All processing and audio synthesis happens in the browser.
 
 ---
 
