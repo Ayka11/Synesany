@@ -312,24 +312,26 @@ class AudioEngine {
         break;
       }
       case 'piano': {
-        // Piano: main tone plus inharmonic partials for realism
+        // Piano: main tone plus richer inharmonic partials for realism
         // Fundamental
         const main = ctx.createOscillator();
         main.type = 'triangle';
         main.frequency.setValueAtTime(freq, now);
 
-        // Slightly inharmonic partials (real piano strings are not perfect multiples)
-        const partialRatios = [2.01, 3.98, 5.03]; // Slightly off integer multiples
-        const partialGains = [0.28, 0.13, 0.07];
+        // More partials, more realism
+        const partialRatios = [2.01, 3.98, 5.03, 6.99, 8.02]; // Slightly off integer multiples
+        const partialGains = [0.28, 0.13, 0.07, 0.04, 0.02];
         const partials: OscillatorNode[] = [];
         const partialGainsNodes: GainNode[] = [];
         partialRatios.forEach((ratio, i) => {
           const osc = ctx.createOscillator();
           osc.type = 'triangle';
           // Add a tiny detune for realism
-          osc.frequency.setValueAtTime(freq * ratio * (1 + (Math.random() - 0.5) * 0.002), now);
+          osc.frequency.setValueAtTime(freq * ratio * (1 + (Math.random() - 0.5) * 0.003), now);
+          osc.detune.setValueAtTime((Math.random() - 0.5) * 2, now); // up to ±1 cent
           const g = ctx.createGain();
           g.gain.setValueAtTime(partialGains[i], now);
+          g.gain.linearRampToValueAtTime(0.001, now + 2.2 + i * 0.3); // partials fade faster
           osc.connect(g);
           g.connect(noteGain);
           osc.start(now);
@@ -337,33 +339,35 @@ class AudioEngine {
           partialGainsNodes.push(g);
         });
 
-        // Short noise for hammer attack
-        const nb = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.03), ctx.sampleRate);
+        // Hammer attack: richer noise, short burst
+        const nb = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.045), ctx.sampleRate);
         const nd = nb.getChannelData(0);
-        for (let i = 0; i < nd.length; i++) nd[i] = (Math.random() * 2 - 1) * (1 - i / nd.length);
+        for (let i = 0; i < nd.length; i++) nd[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / nd.length, 2.5);
         const noiseSrc = ctx.createBufferSource();
         noiseSrc.buffer = nb;
         const noiseFilter = ctx.createBiquadFilter();
         noiseFilter.type = 'highpass';
-        noiseFilter.frequency.value = 800;
+        noiseFilter.frequency.value = 1200;
         const noiseGain = ctx.createGain();
-        noiseGain.gain.setValueAtTime(0.8, now);
+        noiseGain.gain.setValueAtTime(1.0, now);
+        noiseGain.gain.linearRampToValueAtTime(0.001, now + 0.04);
         noiseSrc.connect(noiseFilter);
         noiseFilter.connect(noiseGain);
         noiseGain.connect(noteGain);
         if (this.reverb) {
           const wet = ctx.createGain();
-          wet.gain.value = 0.28;
+          wet.gain.value = 0.32;
           noiseGain.connect(this.reverb);
           this.reverb.connect(wet);
           wet.connect(this.gainNode!);
           sources.push(wet);
         }
 
-        // Envelope
+        // Envelope: dynamic, longer sustain for low notes
+        const sustain = Math.max(1.8, 2.6 - Math.log(freq) * 0.18);
         noteGain.gain.setValueAtTime(0, now);
-        noteGain.gain.linearRampToValueAtTime(1.0, now + 0.001);
-        noteGain.gain.exponentialRampToValueAtTime(0.005, now + 2.4);
+        noteGain.gain.linearRampToValueAtTime(1.0, now + 0.002);
+        noteGain.gain.exponentialRampToValueAtTime(0.005, now + sustain);
 
         main.connect(noteGain);
         main.start(now);
@@ -441,6 +445,12 @@ class AudioEngine {
     const totalPoints = strokes.reduce((sum, s) => sum + s.points.length, 0);
     let processed = 0;
 
+    // Mode-specific time scaling
+    let timelineDuration = 3; // default duration for simple mode
+    if (this._mode === 'timeline' && typeof (window as any).canvasDuration === 'number') {
+      timelineDuration = (window as any).canvasDuration;
+    }
+
     for (const stroke of strokes) {
       for (let i = 0; i < stroke.points.length; i += 3) {
         const p = stroke.points[i];
@@ -452,7 +462,11 @@ class AudioEngine {
         const noteGain = ctx.createGain();
 
         osc.type = this.getOscType();
-        const startTime = ctx.currentTime + (processed / totalPoints) * 3;
+        // Timeline mode: map x to time
+        let startTime = ctx.currentTime + (processed / totalPoints) * timelineDuration;
+        if (this._mode === 'timeline') {
+          startTime = ctx.currentTime + (p.x / canvasWidth) * timelineDuration;
+        }
 
         osc.frequency.setValueAtTime(finalFreq, startTime);
         noteGain.gain.setValueAtTime(0, startTime);

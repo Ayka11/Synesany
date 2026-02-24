@@ -7,6 +7,7 @@ const StatusPanel: React.FC = () => {
   const {
     currentColor, brushType, brushSize,
     muted, sonificationMode, canvasRef,
+    canvasDuration,
   } = useAppContext();
   const { t } = useTranslation();
 
@@ -16,7 +17,7 @@ const StatusPanel: React.FC = () => {
 
   return (
     <div className="absolute top-3 right-3 z-20 hidden lg:block">
-      <div className="bg-background/70 backdrop-blur-xl border border-border/30 rounded-xl p-3 shadow-lg space-y-2 min-w-[160px]">
+      <div className="bg-background/70 backdrop-blur-xl border border-border/30 rounded-xl p-3 shadow-lg space-y-2 min-w-[180px]">
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-muted-foreground w-16">{t('status.canvasSize')}</span>
           <span className="text-[10px] font-mono">{w}x{h}</span>

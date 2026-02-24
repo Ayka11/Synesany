@@ -67,11 +67,11 @@ const BottomBar: React.FC = () => {
   ];
 
   const INSTRUMENTS: { type: InstrumentType; key: string }[] = [
-    { type: 'flute', key: 'instrument.flute' },
     { type: 'bell', key: 'instrument.bell' },
     { type: 'guitar', key: 'instrument.guitar' },
     { type: 'bass', key: 'instrument.bass' },
     { type: 'piano', key: 'instrument.piano' },
+    { type: 'violin', key: 'instrument.violin' },
   ];
 
   return (
@@ -151,15 +151,39 @@ const BottomBar: React.FC = () => {
                     className="flex-1 h-1.5 accent-primary" />
                   <span className="text-xs font-mono">{Math.round(volume * 100)}%</span>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2 relative">
                   {INSTRUMENTS.map(inst => (
                     <button key={inst.type} onClick={() => setInstrument(inst.type)}
                       className={`text-xs py-2 px-3 rounded-xl transition-all ${
                         instrument === inst.type ? 'bg-primary/15 text-primary font-medium' : 'hover:bg-accent text-muted-foreground'
-                      }`}>
+                      }`}
+                      title={
+                        inst.type === 'piano' ? 'Melodic, harmonic, expressive (all modes)' :
+                        inst.type === 'violin' ? 'Expressive, emotional, sustained (Harmonic, Timeline, Colorfield)' :
+                        inst.type === 'bell' ? 'Bright, sparkling accents (Simple, Timeline)' :
+                        inst.type === 'guitar' ? 'Plucked, rhythmic, melodic (Simple, Timeline)' :
+                        inst.type === 'bass' ? 'Deep foundations, bold outlines (all modes)' :
+                        ''
+                      }
+                    >
                       {t(inst.key)}
                     </button>
                   ))}
+                  <div className="absolute top-full mt-2 left-0 w-full z-40">
+                    <div className="bg-popover border border-border rounded-xl shadow-xl p-3 text-xs text-muted-foreground">
+                      <div className="font-semibold text-primary mb-1">Live/Acoustic Instrument Suggestions</div>
+                      <ul className="mb-2 list-disc pl-4">
+                        <li><b>Piano:</b> Melodic, harmonic, expressive (all modes)</li>
+                        <li><b>Strings:</b> Rich, emotional layers (Harmonic, Timeline, Colorfield)</li>
+                        <li><b>Guitar:</b> Plucked, rhythmic, melodic (Simple, Timeline)</li>
+                        <li><b>Bell/Mallet:</b> Bright, sparkling accents (Simple, Timeline)</li>
+                        <li><b>Woodwinds:</b> Airy, lyrical textures (Colorfield, Harmonic)</li>
+                        <li><b>Brass:</b> Warm, majestic tones (Harmonic, Colorfield)</li>
+                        <li><b>Synth Pads:</b> Gentle ambient backgrounds (Colorfield, Harmonic)</li>
+                      </ul>
+                      <div className="text-[10px] text-muted-foreground">Try layering instruments and matching modes for cinematic, expressive results.</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

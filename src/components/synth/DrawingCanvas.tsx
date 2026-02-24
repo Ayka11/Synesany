@@ -6,8 +6,45 @@ import { BrushType, DrawingStroke } from '@/data/pianoKeys';
 const DrawingCanvas: React.FC = () => {
   const {
     currentColor, brushType, brushSize, strokes, addStroke,
-    zoom, canvasRef, muted,
+    zoom, canvasRef, muted, sonificationMode, canvasDuration
   } = useAppContext();
+  // --- Time Axis & Mode Overlay Logic ---
+  // Mode-specific time scale and overlay text
+  let axisMax = 10;
+  let axisLabel = '';
+  let tickStep = 1;
+  switch (sonificationMode) {
+    case 'simple':
+      axisMax = Math.max(2, Math.ceil(canvasDuration || 2));
+      axisLabel = 'Simple: Real-time (0.5–2s per stroke)';
+      tickStep = 0.5;
+      break;
+    case 'timeline':
+      axisMax = Math.max(10, Math.ceil(canvasDuration || 10));
+      axisLabel = 'Timeline: X = Time (1–3s/stroke, total 10–60s)';
+      tickStep = 2;
+      break;
+    case 'colorfield':
+      axisMax = Math.max(30, Math.ceil(canvasDuration || 30));
+      axisLabel = 'Colorfield: Ambient (30–300s, generative)';
+      tickStep = 30;
+      break;
+    case 'harmonic':
+      axisMax = Math.max(20, Math.ceil(canvasDuration || 20));
+      axisLabel = 'Harmonic: Layered harmony (2–6s/chord, total 20–120s)';
+      tickStep = 5;
+      break;
+    default:
+      axisMax = Math.max(10, Math.ceil(canvasDuration || 10));
+      axisLabel = sonificationMode;
+      tickStep = 1;
+  }
+
+  // Helper: Generate tick positions
+  const ticks = [];
+  for (let t = 0; t <= axisMax; t += tickStep) {
+    ticks.push(Number(t.toFixed(2)));
+  }
 
   const containerRef = useRef<HTMLDivElement>(null);
   const isDrawing = useRef(false);
@@ -315,6 +352,28 @@ const DrawingCanvas: React.FC = () => {
           onTouchMove={handleMove}
           onTouchEnd={handleEnd}
         />
+        {/* Time Axis & Mode Overlay */}
+        <div className="absolute left-0 right-0 bottom-0 z-20 pointer-events-none select-none">
+          {/* Mode Overlay */}
+          <div className="absolute left-3 bottom-8 bg-background/80 text-xs text-primary px-3 py-1 rounded-lg shadow border border-primary/20">
+            {axisLabel}
+          </div>
+          {/* Time Axis */}
+          <svg width={canvasSize.width} height={32} style={{ display: 'block' }}>
+            {/* Axis line */}
+            <line x1={32} y1={16} x2={canvasSize.width - 16} y2={16} stroke="#888" strokeWidth={1.5} />
+            {/* Ticks and labels */}
+            {ticks.map((t, i) => {
+              const x = 32 + ((canvasSize.width - 48) * (t / axisMax));
+              return (
+                <g key={i}>
+                  <line x1={x} y1={10} x2={x} y2={22} stroke="#888" strokeWidth={1} />
+                  <text x={x} y={30} textAnchor="middle" fontSize="10" fill="#666">{t % 1 === 0 ? t : t.toFixed(1)}s</text>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
       </div>
     </div>
   );
