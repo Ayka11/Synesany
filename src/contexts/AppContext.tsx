@@ -105,6 +105,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [brushType, setBrushType] = useState<BrushType>('round');
   const [brushSize, setBrushSize] = useState(8);
   const [strokes, setStrokes] = useState<DrawingStroke[]>([]);
+  const [canvasDuration, setCanvasDuration] = useState(0);
+
+  // Calculate total canvas duration based on strokes
+  const calculateCanvasDuration = useCallback(() => {
+    if (!strokes.length) return 0;
+    // Use explicit duration if present, else estimate by stroke length
+    return strokes.reduce((sum, s) => {
+      if (typeof s.duration === 'number') return sum + s.duration;
+      // Estimate: min 0.5s, scale by number of points
+      return sum + Math.max(0.5, s.points.length / 200);
+    }, 0);
+  }, [strokes]);
+
+  useEffect(() => {
+    setCanvasDuration(calculateCanvasDuration());
+  }, [strokes, calculateCanvasDuration]);
   const [undoStack, setUndoStack] = useState<DrawingStroke[][]>([]);
   const [redoStack, setRedoStack] = useState<DrawingStroke[][]>([]);
   const [zoom, setZoom] = useState(1);
@@ -112,7 +128,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Audio State
   const [volume, setVolumeState] = useState(0.5);
   const [muted, setMutedState] = useState(false);
-  const [instrument, setInstrumentState] = useState<InstrumentType>('flute');
+  const [instrument, setInstrumentState] = useState<InstrumentType>('piano');
   const [sonificationMode, setSonificationModeState] = useState<SonificationMode>('simple');
 
   // Soundscape
@@ -395,6 +411,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [user]);
 
   return (
+    // ...existing code...
     <AppContext.Provider value={{
       user, profile, authLoading, authModalOpen, setAuthModalOpen,
       signIn, signUp, signOut,

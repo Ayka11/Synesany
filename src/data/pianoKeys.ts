@@ -128,6 +128,7 @@ export interface DrawingStroke {
   brush: BrushType;
   size: number;
   timestamp: number;
+  duration?: number; // Duration in seconds (optional)
 }
 
 export interface SavedDrawing {
