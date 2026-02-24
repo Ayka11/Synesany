@@ -20,10 +20,10 @@ const BRUSHES: { type: BrushType; icon: React.ReactNode; key: string }[] = [
 ];
 
 const INSTRUMENTS: { type: InstrumentType; key: string }[] = [
-  { type: 'sine', key: 'instrument.sine' },
-  { type: 'triangle', key: 'instrument.triangle' },
-  { type: 'sawtooth', key: 'instrument.sawtooth' },
-  { type: 'square', key: 'instrument.square' },
+  { type: 'flute', key: 'instrument.flute' },
+  { type: 'bell', key: 'instrument.bell' },
+  { type: 'guitar', key: 'instrument.guitar' },
+  { type: 'bass', key: 'instrument.bass' },
   { type: 'piano', key: 'instrument.piano' },
 ];
 

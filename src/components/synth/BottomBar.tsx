@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { useAppContext } from '@/contexts/AppContext';
 import { useTranslation } from '@/lib/i18n';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -8,7 +9,10 @@ import {
   Volume2, VolumeX, Circle, Square, Star, PenTool,
   Pencil, Highlighter
 } from 'lucide-react';
+
 import { DEFAULT_COLORS, PIANO_KEYS, BrushType, InstrumentType } from '@/data/pianoKeys';
+import ColorWheelPicker from '@/components/ui/ColorWheelPicker';
+
 
 const BottomBar: React.FC = () => {
   const {
@@ -23,9 +27,9 @@ const BottomBar: React.FC = () => {
   } = useAppContext();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  const [exportOpen, setExportOpen] = useState(false);
-  const [saveModalOpen, setSaveModalOpen] = useState(false);
-  const [saveName, setSaveName] = useState('');
+  const [exportOpen, setExportOpen] = React.useState(false);
+  const [saveModalOpen, setSaveModalOpen] = React.useState(false);
+  const [saveName, setSaveName] = React.useState('');
 
   const handleExport = (format: string) => {
     const canvas = canvasRef.current;
@@ -63,10 +67,10 @@ const BottomBar: React.FC = () => {
   ];
 
   const INSTRUMENTS: { type: InstrumentType; key: string }[] = [
-    { type: 'sine', key: 'instrument.sine' },
-    { type: 'triangle', key: 'instrument.triangle' },
-    { type: 'sawtooth', key: 'instrument.sawtooth' },
-    { type: 'square', key: 'instrument.square' },
+    { type: 'flute', key: 'instrument.flute' },
+    { type: 'bell', key: 'instrument.bell' },
+    { type: 'guitar', key: 'instrument.guitar' },
+    { type: 'bass', key: 'instrument.bass' },
     { type: 'piano', key: 'instrument.piano' },
   ];
 
@@ -88,7 +92,10 @@ const BottomBar: React.FC = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl border-2 border-border" style={{ backgroundColor: currentColor }} />
-                  <input type="color" value={currentColor} onChange={e => setCurrentColor(e.target.value)} className="w-full h-10 rounded-lg" />
+                </div>
+                <div>
+                  {/* Modern Color Wheel Picker */}
+                  <ColorWheelPicker currentColor={currentColor} onColorChange={setCurrentColor} />
                 </div>
                 <div className="grid grid-cols-10 gap-1.5">
                   {DEFAULT_COLORS.map(c => (
@@ -136,7 +143,7 @@ const BottomBar: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <button onClick={() => setMuted(!muted)}
                     className="p-2 rounded-lg hover:bg-accent">
-                    {muted ? <VolumeX className="w-5 h-5 text-destructive" /> : <Volume2 className="w-5 h-5" />}
+                    {muted ? <VolumeX className="w-5 h-5 text-destructive" /> : <Volume2 className="w-5 h-5 text-primary" />}
                   </button>
                   <input type="range" min="0" max="1" step="0.01"
                     value={muted ? 0 : volume}
