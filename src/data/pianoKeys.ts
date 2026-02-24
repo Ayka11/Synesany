@@ -118,7 +118,7 @@ export const DEFAULT_COLORS = [
 
 export type BrushType = 'round' | 'square' | 'spray' | 'star' | 'calligraphy' | 'pencil' | 'marker';
 
-export type InstrumentType = 'sine' | 'triangle' | 'sawtooth' | 'square' | 'piano';
+export type InstrumentType = 'violin' | 'bell' | 'guitar' | 'bass' | 'piano';
 
 export type SonificationMode = 'simple' | 'timeline' | 'colorfield' | 'harmonic';
 

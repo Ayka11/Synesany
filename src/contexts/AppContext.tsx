@@ -112,7 +112,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Audio State
   const [volume, setVolumeState] = useState(0.5);
   const [muted, setMutedState] = useState(false);
-  const [instrument, setInstrumentState] = useState<InstrumentType>('sine');
+  const [instrument, setInstrumentState] = useState<InstrumentType>('flute');
   const [sonificationMode, setSonificationModeState] = useState<SonificationMode>('simple');
 
   // Soundscape
