@@ -31,5 +31,4 @@ jobs:
         with:
           app-name: synestica
           slot-name: production
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ./dist
