@@ -2,7 +2,7 @@ name: Azure Web App CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ deploy/synestica ]
 
 jobs:
   build-and-deploy:
