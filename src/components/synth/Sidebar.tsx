@@ -330,44 +330,80 @@ const Sidebar: React.FC = () => {
       </Section>
 
       {/* Tools Section */}
-      <Section title={t('sidebar.tools')} icon={<Wrench className="w-4 h-4 text-orange-500" />}>
-        <div className="grid grid-cols-2 gap-1.5">
+      <Section title={t('sidebar.sound')} icon={<Music className="w-4 h-4 text-green-500" />}>
+        {/* Volume */}
+        <div className="flex items-center gap-2 mb-3">
           <button
-            onClick={undo}
-            disabled={undoStack.length === 0}
-            className="flex items-center gap-1.5 text-[10px] p-2 rounded-lg hover:bg-accent transition-colors disabled:opacity-30"
+            onClick={() => setMuted(!muted)}
+            className={`p-1 rounded-md transition-colors ${muted ? 'text-destructive' : 'text-foreground'}`}
           >
-            <Undo2 className="w-3.5 h-3.5" /> {t('tool.undo')}
+            {muted ? <span className="text-[10px]">OFF</span> : <span className="text-[10px]">ON</span>}
           </button>
-          <button
-            onClick={redo}
-            disabled={redoStack.length === 0}
-            className="flex items-center gap-1.5 text-[10px] p-2 rounded-lg hover:bg-accent transition-colors disabled:opacity-30"
-          >
-            <Redo2 className="w-3.5 h-3.5" /> {t('tool.redo')}
-          </button>
-          <button
-            onClick={() => setZoom(Math.min(3, zoom + 0.25))}
-            className="flex items-center gap-1.5 text-[10px] p-2 rounded-lg hover:bg-accent transition-colors"
-          >
-            <ZoomIn className="w-3.5 h-3.5" /> {t('tool.zoomIn')}
-          </button>
-          <button
-            onClick={() => setZoom(Math.max(0.25, zoom - 0.25))}
-            className="flex items-center gap-1.5 text-[10px] p-2 rounded-lg hover:bg-accent transition-colors"
-          >
-            <ZoomOut className="w-3.5 h-3.5" /> {t('tool.zoomOut')}
-          </button>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={muted ? 0 : volume}
+            onChange={(e) => {
+              const v = parseFloat(e.target.value);
+              setVolume(v);
+              if (v > 0 && muted) setMuted(false);
+            }}
+            className="flex-1 h-1 accent-primary"
+          />
+          <span className="text-[10px] font-mono w-8 text-right">{Math.round(volume * 100)}%</span>
         </div>
-        <button
-          onClick={clearCanvas}
-          className="w-full flex items-center justify-center gap-1.5 text-[10px] p-2 mt-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
-        >
-          <Trash2 className="w-3.5 h-3.5" /> {t('tool.clear')}
-        </button>
-        <div className="flex items-center justify-center gap-2 mt-2 text-[10px] text-muted-foreground">
-          <span>Zoom: {Math.round(zoom * 100)}%</span>
-        </div>
+
+        {/* ADSR Envelope Controls */}
+        {(() => {
+          // Local ADSR state for UI
+          const [adsr, setAdsr] = React.useState({
+            attack: (window.audioEngine?.adsr?.attack) ?? 0.02,
+            decay: (window.audioEngine?.adsr?.decay) ?? 0.15,
+            sustain: (window.audioEngine?.adsr?.sustain) ?? 0.5,
+            release: (window.audioEngine?.adsr?.release) ?? 0.3,
+          });
+          React.useEffect(() => {
+            if (window.audioEngine && window.audioEngine.setADSR) {
+              window.audioEngine.setADSR(adsr);
+            }
+          }, [adsr]);
+          return (
+            <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4 px-1 w-full max-w-2xl justify-center items-center mb-3">
+              <label className="flex flex-col text-[10px] items-center min-w-[60px] flex-1">
+                Attack
+                <input type="range" min="0.001" max="1" step="0.001" value={adsr.attack}
+                  onChange={e => setAdsr(a => ({ ...a, attack: parseFloat(e.target.value) }))}
+                  className="accent-primary w-full max-w-[80px]" />
+                <span className="font-mono">{adsr.attack.toFixed(3)}s</span>
+              </label>
+              <label className="flex flex-col text-[10px] items-center min-w-[60px] flex-1">
+                Decay
+                <input type="range" min="0.01" max="1" step="0.01" value={adsr.decay}
+                  onChange={e => setAdsr(a => ({ ...a, decay: parseFloat(e.target.value) }))}
+                  className="accent-primary w-full max-w-[80px]" />
+                <span className="font-mono">{adsr.decay.toFixed(2)}s</span>
+              </label>
+              <label className="flex flex-col text-[10px] items-center min-w-[60px] flex-1">
+                Sustain
+                <input type="range" min="0" max="1" step="0.01" value={adsr.sustain}
+                  onChange={e => setAdsr(a => ({ ...a, sustain: parseFloat(e.target.value) }))}
+                  className="accent-primary w-full max-w-[80px]" />
+                <span className="font-mono">{adsr.sustain.toFixed(2)}</span>
+              </label>
+              <label className="flex flex-col text-[10px] items-center min-w-[60px] flex-1">
+                Release
+                <input type="range" min="0.01" max="2" step="0.01" value={adsr.release}
+                  onChange={e => setAdsr(a => ({ ...a, release: parseFloat(e.target.value) }))}
+                  className="accent-primary w-full max-w-[80px]" />
+                <span className="font-mono">{adsr.release.toFixed(2)}s</span>
+              </label>
+            </div>
+          );
+        })()}
+
+        {/* tools: ADSR and volume only; instruments already defined above */}
       </Section>
     </aside>
   );
