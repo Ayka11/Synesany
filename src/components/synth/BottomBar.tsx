@@ -92,7 +92,11 @@ const BottomBar: React.FC = () => {
             </div>
 
             {mobilePanel === 'colors' && (
-              <div className="space-y-3">
+              <div className="space-y-3 border-2 border-dashed border-red-500 relative">
+                {/* DEBUG: Mobile Palette Rendered */}
+                <div style={{position:'absolute',top:0,left:0,right:0,zIndex:1000,background:'#fff3',color:'#b00',fontWeight:'bold',textAlign:'center',fontSize:12}}>
+                  DEBUG: Palette UI visible (isMobile: {String(isMobile)}, mobilePanel: {String(mobilePanel)})
+                </div>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl border-2 border-border" style={{ backgroundColor: currentColor }} />
                 </div>
@@ -114,6 +118,10 @@ const BottomBar: React.FC = () => {
                       className="aspect-square rounded-sm hover:scale-125 transition-transform"
                       style={{ backgroundColor: k.color }} />
                   ))}
+                </div>
+                {/* DEBUG: Show color array lengths */}
+                <div style={{fontSize:10, color:'#b00', marginTop:4}}>
+                  DEFAULT_COLORS: {DEFAULT_COLORS.length}, PIANO_KEYS: {PIANO_KEYS.length}
                 </div>
               </div>
             )}
