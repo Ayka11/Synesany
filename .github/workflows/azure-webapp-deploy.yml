@@ -31,4 +31,4 @@ jobs:
         with:
           app-name: synestica
           slot-name: production
-          package: ./dist
+          package: .
