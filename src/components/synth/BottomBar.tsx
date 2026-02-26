@@ -14,6 +14,8 @@ import { DEFAULT_COLORS, PIANO_KEYS, BrushType, InstrumentType } from '@/data/pi
 
 import ImageSonifyButton from './ImageSonifyButton';
 
+import ColorWheelPicker from '../ui/ColorWheelPicker';
+
 
 const BottomBar: React.FC = () => {
   const {

@@ -218,7 +218,7 @@ const Sidebar: React.FC = () => {
                 className={`w-full aspect-square rounded-sm transition-all hover:scale-125 hover:z-10 ${
                   currentColor === key.color ? 'ring-1 ring-white scale-125 z-10' : ''
                 }`}
-                style={{ backgroundColor: key.color }}
+                style={{ backgroundColor: key.color.startsWith('rgb') ? key.color : key.color }}
               />
             ))}
           </div>
