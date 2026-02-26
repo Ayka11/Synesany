@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAppContext } from '@/contexts/AppContext';
 import { useTranslation } from '@/lib/i18n';
-import { PIANO_KEYS, DEFAULT_COLORS, BrushType, InstrumentType } from '@/data/pianoKeys';
+import { PIANO_KEYS, DEFAULT_COLORS, BrushType, InstrumentType, CUSTOM_PIANO_PALETTE } from '@/data/pianoKeys';
 import {
   Palette, Paintbrush, Music, Wrench, ChevronDown, ChevronRight,
   Circle, Square, Sparkles, Star, PenTool, Pencil, Highlighter,
@@ -142,7 +142,7 @@ const Sidebar: React.FC = () => {
     sidebarOpen,
   } = useAppContext();
   const { t } = useTranslation();
-  const [colorTab, setColorTab] = useState<'custom' | 'rainbow'>('custom');
+  const [colorTab, setColorTab] = useState<'custom' | 'rainbow' | 'palette'>('custom');
 
   if (!sidebarOpen) return null;
 
@@ -184,9 +184,17 @@ const Sidebar: React.FC = () => {
           >
             {t('rainbow.spectrum')}
           </button>
+          <button
+            onClick={() => setColorTab('palette')}
+            className={`flex-1 text-[10px] font-medium py-1 rounded-md transition-colors ${
+              colorTab === 'palette' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-accent'
+            }`}
+          >
+            Custom Palette
+          </button>
         </div>
 
-        {colorTab === 'custom' ? (
+        {colorTab === 'custom' && (
           <div className="grid grid-cols-10 gap-1">
             {DEFAULT_COLORS.map((color) => (
               <button
@@ -199,9 +207,25 @@ const Sidebar: React.FC = () => {
               />
             ))}
           </div>
-        ) : (
+        )}
+        {colorTab === 'rainbow' && (
           <div className="grid grid-cols-11 gap-0.5 max-h-48 overflow-y-auto">
             {PIANO_KEYS.map((key) => (
+              <button
+                key={key.note}
+                onClick={() => setCurrentColor(key.color)}
+                title={`${key.note} (${key.freq.toFixed(0)} Hz)`}
+                className={`w-full aspect-square rounded-sm transition-all hover:scale-125 hover:z-10 ${
+                  currentColor === key.color ? 'ring-1 ring-white scale-125 z-10' : ''
+                }`}
+                style={{ backgroundColor: key.color }}
+              />
+            ))}
+          </div>
+        )}
+        {colorTab === 'palette' && (
+          <div className="grid grid-cols-11 gap-0.5 max-h-48 overflow-y-auto">
+            {CUSTOM_PIANO_PALETTE.map((key) => (
               <button
                 key={key.note}
                 onClick={() => setCurrentColor(key.color)}
